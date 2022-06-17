@@ -3,7 +3,7 @@ const path = require('path');
 
 const dbPath = path.join(process.cwd(), 'dataBase', 'users.json');
 
-const fileService = {
+module.exports = {
     reader: async () => {
         try {
             const data = await fs.readFile(dbPath, {encoding: "utf8"});
@@ -20,8 +20,4 @@ const fileService = {
             console.error(err);
         }
     }
-}
-
-module.exports = {
-    fileService
 }
