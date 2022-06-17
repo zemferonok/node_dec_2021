@@ -3,93 +3,54 @@ const express = require('express');
 const {users} = require('./dataBase/users')
 
 const app = express();
+app.use(express.json());    // For using req.body & req.params data
 
-app.get('/', async (req, res) => {
-    const request = req;    // Request ifo from client
-    res.status(200).json('Response to client..')
-    //  The response must be, but it can be only one
-});
+app.get('/', (req, res) => {
+    res.status(200).json('Response to client..{Root}')
+}); // The response must be, but it can be only one. req - info obj from client
 
 // GET ALL
-app.get('/users', async (req, res) => {
-    res.json(users);
+app.get('/users', (req, res) => {
+    res.json(users);    // If the response is without status it will be 200 as the default
 });
 
 // CREATE
 app.post('/users', (req, res) => {
+    const {name, age} = req.body;
+    if (!name || !age) return res.status(400).json('Set valid data {"name": ..., "age": ...}');
 
-    // const { name, age } = req.body;
-    //
-    // if (!Number.isInteger(age) || age > 0) {
-    //     return res.status(400).json('Set valid age');
-    // }
-    //
-    // if (!name || name.length < 3) {
-    //     return res.status(400).json('Set valid name');
-    // }
-    //
-    // const newUser = {
-    //     id: users[users.length - 1].id ? users[users.length - 1].id + 1 : 1,
-    //     name,
-    //     age,
-    // }
-
-    console.log('params - ' + req.params)
-    console.log('params - ' + req.body)
-    const newUser = {
-        id: users[users.length - 1].id ? users[users.length - 1].id + 1 : 1,
-        name: 'Idiot-' + Math.round(Math.random() * 100),
-        age: 10 + Math.round(Math.random() * 30),
-    }
-
+    const id = users[users.length - 1] ? users[users.length - 1].id + 1 : 1
+    const newUser = {id, name, age,}
     users.push(newUser);
 
-    res.status(201).json(newUser + ' was created');
+    res.status(201).json(newUser);
 });
 
 // DELETE
-// app.delete('/users/:userId', (req, res) => {
-//     const { userId } = req.params;
-//     console.log('UserID')
-//     console.log(userId)
-//
-//     const index = users.findIndex((user) => user.id === +userId);
-//
-//     if (index === -1) {
-//         return res.status(400).json(`User with id ${userId} not found`);
-//     }
-//
-//     users.splice(index, 1);
-//
-//     res.sendStatus(204);
-// });
+app.delete('/users/:userId', (req, res) => {
+    const {userId} = req.params;
 
-// app.put('/users/:usersId', (req, res) => {
-//     users.push({
-//         name: 'TEST',
-//         age: Math.random()*100
-//     });
-//
-//     res.status(201).json('Users was created')
-// });
+    const index = users.findIndex((user) => user.id === +userId);
+    if (index === -1) {
+        return res.status(400).json(`User with id ${userId} not found`);
+    }
 
-// app.get('/users/:userId', (req, res) => {
-//     const userIndex = +req.params.userId;
-//
-//     if (isNaN(userIndex) || userIndex < 0) {
-//         res.status(400).json('Please enter valid ID');
-//         return;
-//     }
-//
-//     const user = users[userIndex];
-//
-//     if (!user) {
-//         res.status(404).json(`Use with ID ${userIndex} is not found`);
-//         return;
-//     }
-//
-//     res.json(user);
-// });
+    users.splice(index, 1);
+
+    res.sendStatus(204);
+});
+
+// GET ONE
+app.get('/users/:userId', (req, res) => {
+    const {userId} = req.params;
+
+    const index = users.findIndex((user) => user.id === +userId);
+    if (index === -1) {
+        return res.status(400).json(`User with id ${userId} not found`);
+    }
+
+    res.json(users[index]);
+}); // All req with params and the similar paths should be in the end if they have the same method
 
 
 app.listen(5000, () => {
