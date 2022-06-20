@@ -1,75 +1,52 @@
-const fileService = require("../services/file.service");
+const userService = require('../services/user.service');
 
 module.exports = {
-    getAll: async (req, res) => {
+    getAllUsers: async (req, res, next) => {
         try {
-            const users = await fileService.reader()
+            const users = await userService.findUsers();
             res.json(users);
-        } catch (err) {
-            res.status(400).json(err.message || 'Unknown Error')
+        } catch (e) {
+            console.log('controller error')
+            next(e);
         }
     },
-    getById: async (req, res) => {
+
+    createUser: async (req, res, next) => {
         try {
-            const {userId} = req.params;
-
-            const users = await fileService.reader();
-            const user = users.find((user) => user.id === +userId);
-            if (!user) return res.status(400).json(`User ${userId} not found`);
-
-            res.json(user);
-        } catch (err) {
-            res.status(400).json(err.message || 'Unknown Error')
-        }
-    },
-    create: async (req, res) => {
-        try {
-            const {name, age} = req.body;
-            if (!name || !age) return res.status(400).json('Set valid data {"name": ..., "age": ...}');
-
-            const users = await fileService.reader();
-            const id = users[users.length - 1] ? users[users.length - 1].id + 1 : 1
-            const newUser = {id, name, age}
-
-            await fileService.writer([...users, newUser]);
+            const newUser = await userService.createUser(req.body);
             res.status(201).json(newUser);
-        } catch (err) {
-            res.status(400).json(err.message || 'Unknown Error')
+        } catch (e) {
+            next(e);
         }
     },
-    updateById: async (req, res) => {
+
+    getUserById: async (req, res, next) => {
         try {
-            const {userId} = req.params;
-            const {name, age} = req.body;
-
-            const users = await fileService.reader();
-            const index = users.findIndex((user) => user.id === +userId);
-            if (index === -1) return res.status(400).json(`User ${userId} not found`);
-            if (!name || !age) return res.status(400).json('Set valid data');
-
-            // const userForUpdate = {...users[index], ...req.body};
-            const userForUpdate = Object.assign(users[index], res.body);
-            users[index] = userForUpdate;
-            await fileService.writer(users);
-
-            res.status(201).json(userForUpdate);
-        } catch (err) {
-            res.status(400).json(err.message || 'Unknown Error')
+            const { userData } = req;
+            res.json(userData);
+        } catch (e) {
+            next(e);
         }
     },
-    deleteById: async (req, res) => {
+
+    updateUserById: async (req, res, next) => {
         try {
-            const {userId} = req.params;
+            const { userId } = req.params;
+            const updatedUser = await userService.updateOneUser({ _id: userId }, req.dateForUpdate);
+            res.status(201).json(updatedUser);
+        } catch (e) {
+            next(e);
+        }
+    },
 
-            const users = await fileService.reader();
-            const index = users.findIndex((user) => user.id === +userId);
-            if (index === -1) return res.status(400).json(`User ${userId} not found`);
+    deleteUserById: async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            await userService.deleteOneUser({ _id: id })
 
-            users.splice(index, 1);
-            await fileService.writer(users);
             res.sendStatus(204);
-        } catch (err) {
-            res.status(400).json(err.message || 'Unknown Error')
+        } catch (e) {
+            next(e);
         }
     },
-}
+};

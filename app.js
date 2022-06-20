@@ -1,15 +1,30 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 const userRouter = require('./routes/user.router');
-const constants = require('./configs/constants');
+const configs = require('./configs/configs');
+
+mongoose.connect(configs.MONGO_URL);
+// If db does not exist, it will be created.
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/users', userRouter);
+
 app.use('*', (req, res) => res.status(404).json('Page not found'));
 
-app.listen(constants.PORT, () => {
-    console.log('Server listen 5000 ', new Date())
+// Catch error from deeper level
+app.use((err, req, res, next) => {
+    res
+        .status(err?.status || 500)
+        .json({
+            error: err?.message || 'Unknown Error',
+            code: err?.status || 500
+        });
+});
+
+app.listen(configs.PORT, () => {
+    console.log(`Server listen ${configs.PORT}`, new Date())
 });
