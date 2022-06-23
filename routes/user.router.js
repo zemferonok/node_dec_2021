@@ -5,6 +5,7 @@ const commonMiddleware = require('../middlewares/common.middleware');
 const userMiddleware = require('../middlewares/user.middleware');
 
 userRouter.get('/',
+    userMiddleware.isUserQueryValid,
     userController.getAllUsers);
 userRouter.get('/:userId',
     commonMiddleware.isIdValid,

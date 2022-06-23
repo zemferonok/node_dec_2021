@@ -1,5 +1,7 @@
 const CustomError = require('../errors/CustomError');
 const userService = require('../services/user.service');
+const userValidator = require('../validators/user.validator');
+const userQueryValidator = require("../validators/query.validator");
 
 module.exports = {
     isUserPresent: async (req, res, next) => {
@@ -27,7 +29,6 @@ module.exports = {
                 return next(new CustomError(`User with email ${email} is exist`, 409));
             }
 
-            // req.userData = user;
             next();
         } catch (e) {
             next(e);
@@ -36,24 +37,12 @@ module.exports = {
 
     isUserValidForCreate: async (req, res, next) => {
         try {
-            const {name, email, age, password} = req.body;
-
-            if (!age || !Number.isInteger(age) || age < 18) {
-                return next(new CustomError('Set valid age'));
+            const {error, value} = userValidator.newUserValidator.validate(req.body)
+            if (error) {
+                return next(new CustomError(error.details[0].message))
             }
 
-            if (!name || name.length < 3) {
-                return next(new CustomError('Set valid name'));
-            }
-
-            if (!email || !email.includes('@')) {
-                return next(new CustomError('Set valid email'));
-            }
-
-            if (!password || password.length < 8) {
-                return next(new CustomError('Set valid password'));
-            }
-
+            req.body = value;
             next();
         } catch (e) {
             next(e);
@@ -62,24 +51,30 @@ module.exports = {
 
     isUserValidForUpdate: async (req, res, next) => {
         try {
-            const {name, age, password} = req.body;
-
-            if (age && !Number.isInteger(age) || age < 18) {
-                return res.status(400).json('Set valid age');
+            const {error, value} = userValidator.updateUserValidator.validate(req.body);
+            if (error) {
+                return next(new CustomError(error.details[0].message))
             }
 
-            if (name && name.length < 3) {
-                return res.status(400).json('Set valid name');
-            }
 
-            if (password && password.length < 8) {
-                return res.status(400).json('Set valid password');
-            }
-
-            req.dateForUpdate = {name, age, password};
+            req.body = value;
             next();
         } catch (e) {
             next(e);
         }
-    }
+    },
+
+    isUserQueryValid: async (req, res, next) => {
+        try {
+            const { error, value } = userQueryValidator.findAll.validate(req.query);
+            if (error) {
+                return next(new CustomError(error.details[0].message));
+            }
+
+            req.query = value;
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
 };

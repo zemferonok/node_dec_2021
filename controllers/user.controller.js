@@ -1,20 +1,29 @@
 const userService = require('../services/user.service');
+const passwordService = require('../services/password.service');
+const {userPresenter} = require("../presenters/user.presenter");
 
 module.exports = {
     getAllUsers: async (req, res, next) => {
         try {
-            const users = await userService.findUsers();
-            res.json(users);
+            const users = await userService.findUsers(req.query);
+
+            const usersForResponse = users.map(user => userPresenter(user))
+
+            res.json(usersForResponse);
         } catch (e) {
-            console.log('controller error')
             next(e);
         }
     },
 
     createUser: async (req, res, next) => {
         try {
-            const newUser = await userService.createUser(req.body);
-            res.status(201).json(newUser);
+            const hash = await passwordService.hashPassword(req.body.password);
+
+            const newUser = await userService.createUser({...req.body, password: hash});
+
+            const userForResponse = userPresenter(newUser);
+
+            res.status(201).json(userForResponse);
         } catch (e) {
             next(e);
         }
@@ -22,8 +31,11 @@ module.exports = {
 
     getUserById: async (req, res, next) => {
         try {
-            const { userData } = req;
-            res.json(userData);
+            const {userData} = req;
+
+            const userForResponse = userPresenter(userData);
+
+            res.json(userForResponse);
         } catch (e) {
             next(e);
         }
@@ -31,9 +43,12 @@ module.exports = {
 
     updateUserById: async (req, res, next) => {
         try {
-            const { userId } = req.params;
-            const updatedUser = await userService.updateOneUser({ _id: userId }, req.dateForUpdate);
-            res.status(201).json(updatedUser);
+            const {userId} = req.params;
+
+            const updatedUser = await userService.updateOneUser({_id: userId}, req.body);
+            const userForResponse = userPresenter(updatedUser);
+
+            res.status(201).json(userForResponse);
         } catch (e) {
             next(e);
         }
@@ -41,8 +56,8 @@ module.exports = {
 
     deleteUserById: async (req, res, next) => {
         try {
-            const { id } = req.params;
-            await userService.deleteOneUser({ _id: id })
+            const {userId} = req.params;
+            await userService.deleteOneUser({_id: userId})
 
             res.sendStatus(204);
         } catch (e) {

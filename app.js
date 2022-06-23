@@ -5,7 +5,6 @@ const userRouter = require('./routes/user.router');
 const configs = require('./configs/configs');
 
 mongoose.connect(configs.MONGO_URL);
-// If db does not exist, it will be created.
 
 const app = express();
 app.use(express.json());
@@ -15,7 +14,6 @@ app.use('/users', userRouter);
 
 app.use('*', (req, res) => res.status(404).json('Page not found'));
 
-// Catch error from deeper level
 app.use((err, req, res, next) => {
     res
         .status(err?.status || 500)
