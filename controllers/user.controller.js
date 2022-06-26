@@ -1,5 +1,4 @@
-const userService = require('../services/user.service');
-const passwordService = require('../services/password.service');
+const {userService, passwordService} = require('../services');
 const {userPresenter} = require("../presenters/user.presenter");
 
 module.exports = {

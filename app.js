@@ -17,6 +17,9 @@ app.use('/users', userRouter);
 app.use('*', (req, res) => res.status(404).json('Page not found'));
 
 app.use((err, req, res, next) => {
+    console.log('##############################')
+    console.log('ERROR in app.js', err?.message)
+    console.log('##############################')
     res
         .status(err?.status || 500)
         .json({

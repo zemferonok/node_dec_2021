@@ -1,26 +1,20 @@
-const passwordService = require('../services/password.service');
-const { generateAuthTokens } = require('../services/token.service');
+const {tokenService, passwordService} = require('../services');
 const OAuth = require('../dataBase/oauth');
-const {login} = require("../validators/auth.validator");
 
 module.exports = {
     login: async (req, res, next) => {
         try {
-            const { password: hashPassword, _id } = req.user;
-            const { password } = req.body;
+            const {password: hashPassword, _id} = req.user;
+            const {password} = req.body;
 
             await passwordService.comparePassword(hashPassword, password);
 
-            const tokens = generateAuthTokens();
+            const tokens = tokenService.generateAuthTokens();
 
-            await OAuth.create({
-                userId: _id,
-                ...tokens
-            })
+            await OAuth.create({userId: _id, ...tokens})
 
             res.json({
                 user: req.user,
-                // ...tokens,
                 tokens,
             });
         } catch (e) {
@@ -30,13 +24,13 @@ module.exports = {
 
     refreshToken: async (req, res, next) => {
         try {
-            const { userId, refresh_token } = req.tokenInfo;
+            const {userId, refresh_token} = req.tokenInfo;
 
-            await OAuth.deleteOne({ refresh_token });
+            await OAuth.deleteOne({refresh_token});
 
-            const tokens = generateAuthTokens();
+            const tokens = tokenService.generateAuthTokens();
 
-            await OAuth.create({ userId, ...tokens });
+            await OAuth.create({userId, ...tokens});
 
             res.json({tokens});
         } catch (e) {
@@ -46,10 +40,9 @@ module.exports = {
 
     logout: async (req, res, next) => {
         try {
-            //  TODO add to deleting also refresh token
-            const { access_token } = req;
+            const {access_token} = req;
 
-            await OAuth.deleteOne({ access_token });
+            await OAuth.deleteOne({access_token});
 
             res.sendStatus(204);
         } catch (e) {
@@ -59,9 +52,9 @@ module.exports = {
 
     logoutAllDevices: async (req, res, next) => {
         try {
-            const { _id } = req.user;
+            const {_id} = req.user;
 
-            await OAuth.deleteMany({ userId: _id });
+            await OAuth.deleteMany({userId: _id});
 
             res.sendStatus(204);
         } catch (e) {

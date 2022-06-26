@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const constants = require('../configs/constants');
+const {constants} = require('../configs');
 
 module.exports = {
     nameValidator: Joi.string().alphanum().min(2).max(15),

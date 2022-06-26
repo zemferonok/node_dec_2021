@@ -1,6 +1,5 @@
 const {Schema, model} = require('mongoose');
 
-// Make a structure of data for db
 const UserSchema = new Schema({
     name: {
         type: String,

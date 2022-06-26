@@ -1,15 +1,14 @@
-const { checkToken } = require("../services/token.service");
-const OAuth = require("../dataBase/oauth");
+const {oauth} = require("../dataBase");
+const {constants} = require('../configs');
+const {tokenTypeEnum} = require('../enums');
 const CustomError = require('../errors/CustomError');
-const userService = require('../services/user.service');
-const authValidator = require('../validators/auth.validator');
-const tokenTypeEnum = require('../enums/token-type.enum');
-const constants = require('../configs/constants');
+const {tokenService, userService} = require("../services");
+const {authValidator} = require('../validators');
 
 module.exports = {
     isLoginBodyValid: async (req, res, next) => {
         try {
-            const { error, value } = await authValidator.login.validate(req.body);
+            const {error, value} = await authValidator.login.validate(req.body);
 
             if (error) {
                 console.log('Error isLoginBodyValid', error);
@@ -26,9 +25,9 @@ module.exports = {
 
     isUserPresentForAuth: async (req, res, next) => {
         try {
-            const { email } = req.body;
+            const {email} = req.body;
 
-            const user = await userService.findOneUser({ email });
+            const user = await userService.findOneUser({email});
 
             if (!user) {
                 console.log('Error isUserPresentForAuth - no user found');
@@ -50,16 +49,17 @@ module.exports = {
                 return next(new CustomError('No token', 401));
             }
 
-            checkToken(access_token);
+            tokenService.checkToken(access_token);
 
             // TODO why does it need?
-            const tokenInfo = await OAuth.findOne({ access_token }).populate('userId');
-            console.log(tokenInfo);
+            const tokenInfo = await oauth.findOne({access_token}).populate('userId');
+            // console.log(tokenInfo);
 
             if (!tokenInfo) {
                 return next(new CustomError('Token not valid', 401));
             }
 
+            //TODO fix this shit
             req.access_token = tokenInfo.access_token;
             req.user = tokenInfo.userId;
             next();
@@ -76,9 +76,9 @@ module.exports = {
                 return next(new CustomError('No token', 401));
             }
 
-            checkToken(refresh_token, tokenTypeEnum.REFRESH);
+            tokenService.checkToken(refresh_token, tokenTypeEnum.REFRESH);
 
-            const tokenInfo = await OAuth.findOne({ refresh_token });
+            const tokenInfo = await oauth.findOne({refresh_token});
 
             if (!tokenInfo) {
                 return next(new CustomError('Token not valid', 401));
