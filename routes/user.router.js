@@ -19,12 +19,12 @@ userRouter.put('/:userId',
     commonMiddleware.isIdValid,
     userMiddleware.isUserValidForUpdate,
     authMiddleware.checkAccessToken,
-    userMiddleware.isUserPresent,    //TODO is that really need?
+    // userMiddleware.isUserPresent,
     userController.updateUserById);
 userRouter.delete('/:userId',
     commonMiddleware.isIdValid,
     authMiddleware.checkAccessToken,
-    userMiddleware.isUserPresent,    //TODO is that really need?
+    // userMiddleware.isUserPresent,
     userController.deleteUserById);
 
 module.exports = userRouter;

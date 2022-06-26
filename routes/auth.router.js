@@ -5,7 +5,7 @@ const {authMiddleware} = require('../middlewares');
 
 router.post('/login',
     authMiddleware.isLoginBodyValid,
-    authMiddleware.isUserPresentForAuth,
+    authMiddleware.isUserPresent,
     authController.login);
 
 router.post('/refreshToken',

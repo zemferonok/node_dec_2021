@@ -5,8 +5,8 @@ module.exports = {
             name: user.name,
             age: user.age,
             email: user.email,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
+            // createdAt: user.createdAt,
+            // updatedAt: user.updatedAt,
         }
     },
 };
