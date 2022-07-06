@@ -1,3 +1,5 @@
 /.idea/
 /node_dec_2021.iml
 /package-lock.json
+/node_modules
+/.env
