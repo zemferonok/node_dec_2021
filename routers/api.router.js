@@ -23,7 +23,8 @@ router.route('/forgot')
 router.route('/delete')
     .post(async (req, res) => {
         const { email, name } = req.body;
-        await emailService.sendMail(email, emailActionEnum.DELETE_ACCOUNT, { name });
+        const count = 'HZ how many..'
+        await emailService.sendMail(email, emailActionEnum.DELETE_ACCOUNT, { name, count });
         res.sendStatus(204);
     });
 

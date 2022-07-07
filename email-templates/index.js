@@ -2,8 +2,8 @@ const { emailActionEnum } = require('../enums');
 
 module.exports = {
     [emailActionEnum.LOGIN]: {
-        subject: 'Welcome on board',
-        template: 'login'
+        subject: 'Welcome on board',    // The text for the letter description field
+        template: 'login'               // The naming of the viewing file (login.hbs)
     },
 
     [emailActionEnum.FORGOT_PASSWORD]: {

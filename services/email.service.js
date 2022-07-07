@@ -1,6 +1,7 @@
-const nodemailer = require('nodemailer');
 const path = require('path');
+const nodemailer = require('nodemailer');
 const hbs = require('nodemailer-express-handlebars');
+
 const { config } = require('../constants');
 const mailInfo = require('../email-templates');
 
