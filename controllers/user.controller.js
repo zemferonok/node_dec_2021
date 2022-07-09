@@ -6,16 +6,6 @@ module.exports = {
             const users = await userService.findUsers();
             res.json(users);
         } catch (e) {
-            console.log('controller error')
-            next(e);
-        }
-    },
-
-    createUser: async (req, res, next) => {
-        try {
-            const newUser = await userService.createUser(req.body);
-            res.status(201).json(newUser);
-        } catch (e) {
             next(e);
         }
     },
@@ -29,10 +19,20 @@ module.exports = {
         }
     },
 
+    createUser: async (req, res, next) => {
+        try {
+            const newUser = await userService.createUser(req.body);
+            res.status(201).json(newUser);
+        } catch (e) {
+            next(e);
+        }
+    },
+
     updateUserById: async (req, res, next) => {
         try {
             const { userId } = req.params;
-            const updatedUser = await userService.updateOneUser({ _id: userId }, req.dateForUpdate);
+            const {dateForUpdate} = req;
+            const updatedUser = await userService.updateOneUser({ _id: userId }, dateForUpdate);
             res.status(201).json(updatedUser);
         } catch (e) {
             next(e);
@@ -41,8 +41,8 @@ module.exports = {
 
     deleteUserById: async (req, res, next) => {
         try {
-            const { id } = req.params;
-            await userService.deleteOneUser({ _id: id })
+            const { userId } = req.params;
+            await userService.deleteOneUser({ _id: userId })
 
             res.sendStatus(204);
         } catch (e) {

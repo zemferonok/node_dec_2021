@@ -1,19 +1,19 @@
-const Users = require('../dataBase/users.js');
+const UsersDB = require('../dataBase/users.js');
 
 module.exports = {
     findUsers: (params = {}) => {
-        return Users.find(params);
+        return UsersDB.find(params);
     },
     findOneUser: (params = {}) => {
-        return Users.findOne(params);
+        return UsersDB.findOne(params);
     },
     createUser: (user) => {
-        return Users.create(user);
+        return UsersDB.create(user);
     },
     updateOneUser: (params, userData, options = { new: true }) => {
-        return Users.findOneAndUpdate(params, userData, options);
+        return UsersDB.findOneAndUpdate(params, userData, options);
     },
     deleteOneUser: (params = {}) => {
-        return Users.deleteOne(params);
+        return UsersDB.deleteOne(params);
     },
 }

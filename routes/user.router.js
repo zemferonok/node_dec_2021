@@ -5,23 +5,28 @@ const commonMiddleware = require('../middlewares/common.middleware');
 const userMiddleware = require('../middlewares/user.middleware');
 
 userRouter.get('/',
-    userController.getAllUsers);
+    userController.getAllUsers
+);
 userRouter.get('/:userId',
     commonMiddleware.isIdValid,
     userMiddleware.isUserPresent,
-    userController.getUserById);
+    userController.getUserById
+);
 userRouter.post('/',
     userMiddleware.isUserValidForCreate,
     userMiddleware.isUserUniq,
-    userController.createUser);
+    userController.createUser
+);
 userRouter.put('/:userId',
     commonMiddleware.isIdValid,
     userMiddleware.isUserValidForUpdate,
     userMiddleware.isUserPresent,
-    userController.updateUserById);
+    userController.updateUserById
+);
 userRouter.delete('/:userId',
     commonMiddleware.isIdValid,
     userMiddleware.isUserPresent,
-    userController.deleteUserById);
+    userController.deleteUserById
+);
 
 module.exports = userRouter;

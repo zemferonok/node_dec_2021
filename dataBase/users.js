@@ -1,6 +1,6 @@
 const {Schema, model} = require('mongoose');
 
-// Make a structure of data for db
+// Make a structure of data for DB
 const UserSchema = new Schema({
     name: {
         type: String,
@@ -15,18 +15,8 @@ const UserSchema = new Schema({
         trim: true,
         lowercase: true
     },
-
-    age: {
-        type: Number,
-        required: true,
-    },
-
-    password: {
-        type: String,
-        required: true
-    }
 }, {timestamps: true});
 
 
-// Use the 'users' collection of db
-module.exports = model('users', UserSchema);
+// Use the 'aws_s3_users' collection of db
+module.exports = model('aws_s3_users', UserSchema);

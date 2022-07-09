@@ -1,11 +1,12 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 
 const userRouter = require('./routes/user.router');
 const configs = require('./configs/configs');
 
+// If DB doesn't exist, it will be created.
 mongoose.connect(configs.MONGO_URL);
-// If db does not exist, it will be created.
 
 const app = express();
 app.use(express.json());
