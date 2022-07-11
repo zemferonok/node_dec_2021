@@ -15,6 +15,7 @@ const UserSchema = new Schema({
         trim: true,
         lowercase: true
     },
+    avatar: String
 }, {timestamps: true});
 
 

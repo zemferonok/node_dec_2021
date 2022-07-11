@@ -11,7 +11,7 @@ module.exports = {
                 return next(new CustomError('User not found'));
             }
 
-            req.userData = user;
+            req.user = user;
             next();
         } catch (e) {
             next(e);
@@ -59,7 +59,7 @@ module.exports = {
                 return res.status(400).json('Set valid name');
             }
 
-            req.dateForUpdate = {name};
+            // req.dateForUpdate = {name};
             next();
         } catch (e) {
             next(e);
